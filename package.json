@@ -1,5 +1,5 @@
 {
-  "name": "gimages",
+  "name": "@killovsky/gimages",
   "version": "1.0.0",
   "description": "Módulo totalmente configurável que realiza buscas assincronamente no Google Imagens.",
   "main": "index.js",
@@ -28,6 +28,7 @@
   ],
   "author": "KillovSky",
   "social": {
+    "package": "https://www.npmjs.com/package/@killovsky/gimages",
     "github": "https://github.com/KillovSky",
     "npm": "https://npmjs.com/~killovsky",
     "other": "https://linktr.ee/killovsky"

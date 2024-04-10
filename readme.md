@@ -5,7 +5,7 @@
 - Rode o código abaixo para instalar via `NPM`:  
   
 ```bash  
-$ npm i gimages  
+$ npm i @killovsky/gimages  
 ```  
   
 - Rode o código abaixo para instalar via `GIT`:  
@@ -140,14 +140,14 @@ packages()
   
 ```javascript  
 /* Usando .then | Modo de uso padrão */  
-const gimages = require('gimages');  
+const gimages = require('@killovsky/gimages');  
 gimages.get('anime girls').then(data => {  
 	/* Faça seu código baseado na object 'data' aqui */  
 	/* Exemplo: console.log(data); */  
 })  
   
 /* Usando await [async] | Modo de uso padrão */  
-const gimages = require('gimages');  
+const gimages = require('@killovsky/gimages');  
 const data = await gimages.get({ query: 'anime', safe: false });  
 /* Faça seu código aqui usando a const 'data' */  
 /* Exemplo: console.log(data); */  
@@ -160,7 +160,7 @@ const data = await gimages.get({ query: 'anime', safe: false });
   
 ```javascript  
 /* Código usando .then */  
-const gimages = require('gimages');  
+const gimages = require('@killovsky/gimages');  
 gimages.get({ query: 'Shinji Ikari', safe: true, showerror: true }).then(data => console.log(data));  
 ```  
   
@@ -171,7 +171,7 @@ gimages.get({ query: 'Shinji Ikari', safe: true, showerror: true }).then(data =>
   
 ```javascript  
 /* Código usando await */   
-const gimages = require('gimages');  
+const gimages = require('@killovsky/gimages');  
 const data = await gimages.get({ query: 'Asuka Langley', safe: false, showerror: false });  
 console.log(data);  
   
@@ -295,4 +295,4 @@ console.log(data);
 - Se obtiver algum problema, você pode me dizer [Reportando nas Issues](https://github.com/KillovSky/GImages/issues).  
 - Confira outros projetos meus [Acessando Isto](https://github.com/KillovSky).  
 - Se gostar, doe para me ajudar a continuar desenvolvendo, mais informações [Clicando Aqui](http://linktr.ee/KillovSky)  
-  
+- [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKillovSky%2FGImages&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=true)](https://hits.seeyoufarm.com)  
