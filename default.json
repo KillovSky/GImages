@@ -1,0 +1,59 @@
+{
+    "date": "10/04/2024 15:30:00",
+    "error": false,
+    "message": false,
+    "code": 200,
+    "defaultSearch": {
+        "query": "IMAGE_TESTING_SFW1",
+        "rawQuery": "",
+        "safe": true,
+        "useragent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "searchURL": "http://images.google.com/search?",
+        "formats": [
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".bmp",
+            ".svg",
+            ".tiff",
+            ".ico"
+        ],
+        "filter": [
+            "gstatic.com"
+        ],
+        "only": [],
+        "showerror": false
+    },
+    "search": {
+        "amount": 0,
+        "error": true,
+        "message": "Test mode only, no search has been set."
+    },
+    "explain": {
+        "code": "OK",
+        "why": "The request is OK, this response depends on the HTTP method used."
+    },
+    "headers": {
+        "Accept": "application/json, text/plain, */*",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+        "Accept-Encoding": "gzip, compress, deflate, br"
+    },
+    "images": [
+        {
+            "url": "https://www.researchgate.net/publication/355767851/figure/fig8/AS:1085298289188864@1635766684005/Focused-imaging-of-a-single-medium-a-TFM-b-SFM-1-in-equation-4-j723-c.jpg",
+            "width": 487,
+            "height": 600
+        },
+        {
+            "url": "https://www.researchgate.net/publication/280218990/figure/fig2/AS:305206152712198@1449778225492/Immunophenotypic-analysis-of-P1-HDPC-cultured-in-SFM-1-with-multicolor-flow-cytometry.png",
+            "width": 1273,
+            "height": 850
+        },
+        {
+            "url": "https://cdn.productimages.abb.com/9PAA00000029405_720x540.png",
+            "width": 540,
+            "height": 495
+        }
+    ]
+}

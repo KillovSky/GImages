@@ -1,0 +1,53 @@
+{
+  "name": "gimages",
+  "version": "1.0.0",
+  "description": "Módulo totalmente configurável que realiza buscas assincronamente no Google Imagens.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KillovSky/GImages.git"
+  },
+  "keywords": [
+    "google",
+    "images",
+    "search",
+    "nsfw",
+    "sfw",
+    "secure",
+    "jpg",
+    "png",
+    "jpeg",
+    "gif",
+    "g-i-s",
+    "bmp",
+    "svg",
+    "async"
+  ],
+  "author": "KillovSky",
+  "social": {
+    "github": "https://github.com/KillovSky",
+    "npm": "https://npmjs.com/~killovsky",
+    "other": "https://linktr.ee/killovsky"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KillovSky/GImages/issues"
+  },
+  "homepage": "https://github.com/KillovSky/GImages#readme",
+  "dependencies": {
+    "axios": "^1.6.8"
+  },
+  "funding": [
+    {
+      "type": "kofi",
+      "url": "http://ko-fi.com/killovsky"
+    },
+    {
+      "type": "others",
+      "url": "https://github.com/KillovSky#-fundings"
+    }
+  ]
+}
