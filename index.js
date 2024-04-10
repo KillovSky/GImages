@@ -83,7 +83,7 @@ async function searchImages(param = defaultSearch) {
             /* Verifica se a safe é uma boolean, e se não for */
             if (typeof safe !== 'boolean') {
                 /* Define como padrão */
-                safe = defaultSearch.query;
+                safe = defaultSearch.safe;
             }
 
             /* Verifica se a useragent é uma string, e se não for */
@@ -224,8 +224,8 @@ async function searchImages(param = defaultSearch) {
 
                         /* Se permite printar erros */
                         if (showerror === true) {
-                            /* Faz no formato console.err */
-                            console.err(err);
+                            /* Faz no formato console.error */
+                            console.error(err);
                         }
                     }
                 });
@@ -269,8 +269,8 @@ async function searchImages(param = defaultSearch) {
 
         /* Se permite printar erros */
         if (response.defaultSearch.showerror === true) {
-            /* Faz no formato console.err */
-            console.err(error);
+            /* Faz no formato console.error */
+            console.error(error);
         }
     }
 

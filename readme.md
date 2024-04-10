@@ -93,7 +93,7 @@ get({
 * Padrão: [".jpg",".jpeg",".png",".gif",".bmp",".svg",".tiff",".ico"]  
 * ---------------------------------------  
 * 6° - filter  
-* Valores: Boolean (true/false)  
+* Valores: Array  
 * O que é: URLs que não deve procurar  
 * Padrão: ["gstatic.com"]   
 * ---------------------------------------  

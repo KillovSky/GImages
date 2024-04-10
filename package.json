@@ -1,7 +1,7 @@
 {
   "name": "@killovsky/gimages",
-  "version": "1.0.0",
-  "description": "Módulo totalmente configurável que realiza buscas assincronamente no Google Imagens.",
+  "version": "1.0.1",
+  "description": "Módulo altamente configurável para realizar buscas assincronamente no Google Imagens.",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
@@ -24,7 +24,14 @@
     "g-i-s",
     "bmp",
     "svg",
-    "async"
+    "async",
+    "scrapper",
+    "api",
+    "google images",
+    "google search",
+    "modular",
+    "configurable",
+    "easy"
   ],
   "author": "KillovSky",
   "social": {
