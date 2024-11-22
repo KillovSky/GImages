@@ -1,302 +1,245 @@
 /* eslint-disable max-len */
-/* Dependencias */
+
+/* Dependências */
 const axios = require('axios');
 const queryString = require('querystring');
 const httpcodes = require('./codes.json');
-const response = require('./default.json');
 const mopack = require('./package.json');
 
-/* Define uma object padrão para usar no caso de enviar valores invalidos */
-const {
-    defaultSearch,
-} = response;
+/**
+ * @typedef {Object} response
+ * @property {string} date - Data e hora da resposta.
+ * @property {boolean} error - Indica se houve um erro na resposta.
+ * @property {boolean} message - Indica se há uma mensagem adicional de erro ou não.
+ * @property {number} code - Código HTTP da resposta.
+ * @property {Object} defaultSearch - Detalhes sobre a pesquisa padrão.
+ * @property {string} defaultSearch.query - A consulta de pesquisa padrão.
+ * @property {string} defaultSearch.rawQuery - A consulta bruta.
+ * @property {boolean} defaultSearch.safe - Indica se a pesquisa deve ser segura.
+ * @property {string} defaultSearch.useragent - O user agent usado para a pesquisa.
+ * @property {string} defaultSearch.searchURL - URL base para pesquisa.
+ * @property {string[]} defaultSearch.formats - Formatos de imagem permitidos na pesquisa.
+ * @property {string[]} defaultSearch.filter - Filtros aplicados à pesquisa.
+ * @property {string[]} defaultSearch.only - Restrições específicas de pesquisa.
+ * @property {boolean} defaultSearch.exact - Indica se a busca deve ser exata.
+ * @property {boolean} defaultSearch.showerror - Indica se erros devem ser mostrados.
+ * @property {Object} search - Detalhes sobre o resultado da pesquisa.
+ * @property {number} search.amount - Quantidade de resultados encontrados na pesquisa.
+ * @property {boolean} search.error - Indica se houve um erro na pesquisa.
+ * @property {string} search.message - Mensagem de erro relacionada à pesquisa.
+ * @property {Object} explain - Explicações sobre o status da resposta.
+ * @property {string} explain.code - Código explicativo sobre o status da resposta.
+ * @property {string} explain.why - Razão do status da resposta.
+ * @property {Object} headers - Cabeçalhos HTTP da resposta.
+ * @property {string} headers.Accept - Tipos de conteúdo aceitos pela resposta.
+ * @property {string} headers['User-Agent'] - O user agent da requisição.
+ * @property {string} headers['Accept-Encoding'] - Tipos de codificação aceitos pela resposta.
+ * @property {Array.<Object>} images - Lista de imagens retornadas.
+ * @property {string} images[].url - URL da imagem.
+ * @property {number} images[].width - Largura da imagem.
+ * @property {number} images[].height - Altura da imagem.
+ */
+const response = require('./default.json');
+
+/**
+ * Configuração padrão para buscas de imagens.
+ * @typedef {Object} defaultSearch
+ * @property {string} query - Termo de busca.
+ * @property {boolean} safe - Ativar busca segura.
+ * @property {string} useragent - User-Agent da requisição.
+ * @property {string} searchURL - URL base para a busca.
+ * @property {string[]} formats - Formatos de imagem permitidos.
+ * @property {string[]} filter - Domínios a serem bloqueados.
+ * @property {RegExp} regexp - Expressão regular para parsear resultados.
+ * @property {string} rawQuery - Parâmetros extras para a URL.
+ * @property {boolean} showerror - Exibir mensagens de erro no console.
+ * @property {string[]} only - Domínios permitidos explicitamente.
+ * @property {string[]} exact - Define se o filtro only será absoluto, permitindo ou não subdominios.
+ */
+const { defaultSearch } = response;
 defaultSearch.regexp = /\["(http.+?)",(\d+),(\d+)\]/gi;
 
-/* JS DOC para Visual Studio Code ou outros */
 /**
- * Realiza uma busca de imagens no serviço de imagens do Google de forma ilimitada e simples.
- * @param {Object} param - Parâmetros da busca de imagens.
- * @param {string} [param.query='IMAGE_TESTING_SFW1'] - O que você deseja buscar.
- * @param {boolean} [param.safe=true] - Define se a busca deve ser feita de forma segura, removendo conteúdo impróprio.
- * @param {string} [param.useragent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'] - A identificação do request.
- * @param {string} [param.searchURL='http://images.google.com/search?'] - A URL que efetuará a busca.
- * @param {Array} [param.formats=['.jpg','.jpeg','.png','.gif','.bmp','.svg','.tiff','.ico']] - Lista de formatos de imagens permitidos.
- * @param {Array} [param.filter=['gstatic.com']] - URLs que não devem ser incluídas nos resultados da busca.
- * @param {RegExp} [param.regexp=/\["(http.+?)",(\d+),(\d+)\]/gi] - Expressão regular responsável por filtrar resultados.
- * @param {string} [param.rawQuery=''] - Uma query adicional que não é codificada em URI, usada para enviar parâmetros com '&' e outros.
- * @param {boolean} [param.showerror=false] - Define se é permitido exibir erros na tela ou se apenas serão colocados no objeto final os detalhes.
- * @param {Array} [param.only=[]] - Define a busca para puxar imagens apenas dessas URLs.
- * @returns {Promise<Object>} - Uma Promise que resolve com um objeto contendo os resultados da busca.
+ * @typedef {defaultSearch} SearchConfig
+ * @description O tipo `SearchConfig` é idêntico ao tipo de configuração padrão `defaultSearch`.
+ * Ele representa as configurações personalizadas que podem ser passadas para a função `searchImages`.
  */
-/* Cria a exports para atuar como função */
-async function searchImages(param = defaultSearch) {
-    /* Define o param para assignment externo depois */
-    let paramSearch = param;
 
-    /*
-        Adiciona a execução dentro de uma try-catch
-        Assim evita falhas como enviar um 'Symbol' no param
-    */
+/**
+ * Valida e ajusta parâmetros fornecidos pelo usuário.
+ * @param {Object} params - Parâmetros fornecidos pelo usuário.
+ * @returns {SearchConfig} Configuração combinada.
+ */
+function validateParams(params) {
+    return {
+        query: typeof params.query === 'string' ? params.query : defaultSearch.query,
+        safe: typeof params.safe === 'boolean' ? params.safe : defaultSearch.safe,
+        useragent: typeof params.useragent === 'string' ? params.useragent : defaultSearch.useragent,
+        searchURL: typeof params.searchURL === 'string' ? params.searchURL : defaultSearch.searchURL,
+        formats: Array.isArray(params.formats) ? params.formats : defaultSearch.formats,
+        filter: Array.isArray(params.filter) ? params.filter : defaultSearch.filter,
+        regexp: params.regexp instanceof RegExp ? params.regexp : defaultSearch.regexp,
+        rawQuery: typeof params.rawQuery === 'string' ? params.rawQuery : defaultSearch.rawQuery,
+        showerror: typeof params.showerror === 'boolean' ? params.showerror : defaultSearch.showerror,
+        only: Array.isArray(params.only) ? params.only : defaultSearch.only,
+        exact: typeof params.exact === 'boolean' ? params.exact : defaultSearch.exact,
+    };
+}
+
+/**
+ * Busca imagens no Google com base em parâmetros fornecidos.
+ * @async
+ * @param {SearchConfig} param - Configuração personalizada para a busca.
+ * @returns {Promise<Object>} Resposta contendo imagens encontradas ou um erro.
+ */
+async function searchImages(configs = defaultSearch) {
+    /* Usa um hard-try para evitar qualquer crash */
     try {
-        /* Se param for uma string, faz uma Object apartir dela */
-        if (typeof param === 'string') {
-            /* Apenas da query, outros permanecem em defaultSearch */
-            paramSearch = {
-                query: param,
-            };
+        /* Valida e combina os parâmetros fornecidos */
+        const searchParams = validateParams(configs);
+
+        /* Retorna resposta padrão se a query for o termo de teste */
+        if (searchParams.query === 'IMAGE_TESTING_SFW1') {
+            return response;
         }
 
-        /* Verifica se o 'paramSearch' é de fato uma Object, mas não Array */
-        if (typeof paramSearch === 'object' && !Array.isArray(paramSearch)) {
-            /* Se ele for, define os parametros da busca */
-            let {
-                query = defaultSearch.query,
-                safe = defaultSearch.safe,
-                useragent = defaultSearch.useragent,
-                searchURL = defaultSearch.searchURL,
-                formats = defaultSearch.formats,
-                filter = defaultSearch.filter,
-                regexp = defaultSearch.regexp,
-                rawQuery = defaultSearch.rawQuery,
-                showerror = defaultSearch.showerror,
-                only = defaultSearch.only,
-            } = paramSearch;
+        /* Adiciona filtros "only" como cláusulas site: */
+        const getURL = searchParams.only.filter((url) => url.includes('http'));
+        const onlyFilter = (getURL.length > 0
+            ? ` ${searchParams.only.map((domain) => `site:${domain}`).join(' OR ')}`
+            : ''
+        );
 
-            /* CORREÇÃO DE PARAMETROS */
-            /* Melhor uma correção do que um código dando crash! */
+        /* Adiciona filtros como cláusulas -site: */
+        const filterURL = searchParams.filter.filter((url) => url.includes('http'));
+        const onlySite = (filterURL.length > 0
+            ? ` ${searchParams.filter.map((domain) => `-site:${domain}`).join(' AND ')}`
+            : ''
+        );
 
-            /* Verifica se a query é uma string, e se não for */
-            if (typeof query !== 'string') {
-                /* Define como a execução teste */
-                query = defaultSearch.query;
-            }
+        /* Monta a URL de requisição */
+        const query = `${searchParams.query}${onlyFilter}${onlySite}`;
+        const requestURL = `${searchParams.searchURL}${searchParams.safe ? 'safe=on&' : ''}${queryString.stringify({ tbm: 'isch', q: query })}${searchParams.rawQuery}`;
+        console.log(requestURL);
 
-            /* Verifica se a query é uma string, e se não for */
-            if (typeof rawQuery !== 'string') {
-                /* Define como a execução teste */
-                rawQuery = defaultSearch.rawQuery;
-            }
+        /* Faz a requisição ao Google */
+        const { data, status, config } = await axios.get(requestURL, {
+            headers: { 'User-Agent': searchParams.useragent },
+        });
 
-            /* Se a query for modo teste, retorna aqui mesmo o resultado */
-            if (query === 'IMAGE_TESTING_SFW1') return response;
+        /* Atualiza informações na resposta */
+        response.code = status;
+        response.date = new Date().toLocaleString();
+        response.explain = httpcodes[status];
+        response.headers = config.headers;
 
-            /* Verifica se a safe é uma boolean, e se não for */
-            if (typeof safe !== 'boolean') {
-                /* Define como padrão */
-                safe = defaultSearch.safe;
-            }
+        /* Filtra e processa os resultados encontrados */
+        let results = [];
+        let matches = data.match(searchParams.regexp) || [];
+        matches = matches.filter((src) => searchParams.formats.some((res) => src.includes(res)));
 
-            /* Verifica se a useragent é uma string, e se não for */
-            if (typeof useragent !== 'string') {
-                /* Define como padrão */
-                useragent = defaultSearch.useragent;
-            }
+        /* Verifica resultado a resultado */
+        matches.forEach((src) => {
+            /* Usa em try para evitar qualquer crash */
+            try {
+                /* Parseia a string */
+                const parsed = JSON.parse(src);
 
-            /* Verifica se a showerror é uma string, e se não for */
-            if (typeof showerror !== 'boolean') {
-                /* Define como padrão */
-                showerror = defaultSearch.showerror;
-            }
+                /* Obtém a URL */
+                const url = parsed[0] || '';
 
-            /* Verifica se a searchURL é uma string, e se não for */
-            if (typeof searchURL !== 'string') {
-                /* Define como padrão */
-                searchURL = defaultSearch.searchURL;
-            }
+                /* Valida formatos, filtros e restrições */
+                if (
+                    searchParams.formats.some((ext) => url.includes(ext))
+                    && searchParams.filter.some((block) => !url.includes(block))
+                ) {
+                    /* Adiciona a imagem */
+                    results.push({
+                        url,
+                        width: parsed[1] || 0,
+                        height: parsed[2] || 0,
+                    });
 
-            /* Verifica se a formats é uma array, e se não for */
-            if (!Array.isArray(formats)) {
-                /* Define como padrão */
-                formats = defaultSearch.formats;
-            }
+                    /* Se for filtragem exata */
+                    if (searchParams.exact === true) {
+                        /* DEFINE FILTRAGEM ABSOLUTA, BANE SUBDOMINIOS, USE COM CAUTELA! */
+                        const includeURL = searchParams.only.filter((urly) => !urly.includes('http'));
+                        const excludeURL = searchParams.filter.filter((urly) => !urly.includes('http'));
 
-            /* Verifica se a filter é uma array, e se não for */
-            if (!Array.isArray(filter)) {
-                /* Define como padrão */
-                filter = defaultSearch.filter;
-            }
-
-            /* Verifica se a filter é uma array, e se não for */
-            if (!Array.isArray(only)) {
-                /* Define como padrão */
-                only = defaultSearch.only;
-            }
-
-            /* Verifica se a regexp é uma expressão regular, e se não for */
-            if (!(regexp instanceof RegExp)) {
-                /* Define como padrão */
-                regexp = defaultSearch.regexp;
-            }
-
-            /* INICIAR A FUNÇÃO DE BUSCA */
-            /* Vai usar tudo que foi configurado acima */
-
-            /*
-                Define o uso da URL base, modo seguro
-                e encoda o resto da busca para que funcione em outros idiomas
-            */
-            /* A rawquery não é encodada, caso você queira usar algo adicional, comece com & */
-            const requestURL = searchURL + (safe === true ? 'safe=on&' : '') + queryString.stringify({
-                tbm: 'isch',
-                q: query,
-            }) + rawQuery;
-
-            /* Faz a busca */
-            const information = await axios.get(requestURL, {
-                headers: {
-                    'User-Agent': useragent,
-                },
-            });
-
-            /* FORMATAR OS DADOS RECEBIDOS */
-            /* Aqui usaremos RegExp, filter e outros sistemas */
-
-            /* Define no JSON o código HTTP da busca */
-            response.code = information.status;
-
-            /* Define a data que finalizou */
-            response.date = new Date().toLocaleString();
-
-            /* Define a explicação do request */
-            response.explain = httpcodes[information.status];
-
-            /* Define os headers que usou */
-            response.headers = information.config.headers;
-
-            /* Define os dados da defaultSearch no JSON */
-            response.defaultSearch = {
-                query,
-                safe,
-                useragent,
-                searchURL,
-                formats,
-                filter,
-                regexp,
-                rawQuery,
-                showerror,
-                only,
-            };
-
-            /* Define uma array para preencher com resultados */
-            let results = [];
-
-            /* Define os resultados iniciais, ainda precisam de formatação */
-            let infodata = information.data.match(regexp);
-
-            /* Filtra apenas os que contém imagens */
-            infodata = infodata.filter((src) => formats.some((res) => src.includes(res)));
-
-            /* Faz a filtragem pelos sites bloqueados */
-            infodata = infodata.filter((src) => !filter.some((res) => src.includes(res)));
-
-            /* Faz a filtragem pelos sites requisitados, se houver */
-            infodata = (only.length > 0
-                ? infodata.filter((src) => only.some((res) => src.includes(res)))
-                : infodata
-            );
-
-            /* Se houver algum resultado acima */
-            if (infodata.length > 0) {
-                /* Faz um forEach para preencher a results com uma array correta */
-                infodata.forEach((src) => {
-                    /* Tenta fazer parse */
-                    try {
-                        /* Se bem sucedido, vai retornar uma Object */
-                        const parsedObj = JSON.parse(src);
-
-                        /* Verifica se é imagem de novo */
-                        if (formats.some((fex) => (parsedObj[0] || 'NOPE').includes(fex))) {
-                            /* Joga o resultado na array como object formatada */
-                            results.push({
-                                url: parsedObj[0] || 'DROPTHIS',
-                                width: parsedObj[1] || 0,
-                                height: parsedObj[2] || 0,
-                            });
+                        /* Apenas se only tiver valores */
+                        if (searchParams.only.length > 0) {
+                            /* Só permite URLs que estejam na lista 'only' */
+                            results = (results.filter((surl) => searchParams.only.some((allow) => surl.url.includes(allow))
+                                && (includeURL ? surl.url.includes(includeURL) : true))
+                            );
                         }
 
-                        /* Se tiver dado algum erro no parse */
-                    } catch (err) {
-                        /* Insere no JSON final */
-                        response.error = {
-                            error: true,
-                            message: err.message,
-                        };
-
-                        /* Se permite printar erros */
-                        if (showerror === true) {
-                            /* Faz no formato console.error */
-                            console.error(err);
+                        /* Apenas se filter tiver valores */
+                        if (searchParams.filter.length > 0) {
+                            /* Só permite URLs que não estejam na lista 'filter' */
+                            results = (results.filter((surl) => searchParams.filter.filter((not) => !surl.url.includes(not))
+                                && (excludeURL ? !surl.url.includes(excludeURL) : true))
+                            );
                         }
                     }
-                });
+                }
+
+                /* Se chegar a um crash */
+            } catch (err) {
+                /* So vai exibir a falha se permitido */
+                if (searchParams.showerror) { console.error('Erro ao parsear resultado:', err.message); }
             }
+        });
 
-            /* Remove valores errados */
-            results = results.filter((res) => !res.url.includes('DROPTHIS'));
+        /* Define os resultados na resposta */
+        response.defaultSearch = searchParams;
+        response.images = results.length > 0 ? results : response.images;
+        response.search = {
+            amount: results.length,
+            error: results.length === 0,
+            message: results.length === 0 ? 'No results' : '',
+        };
 
-            /* Se não achou resultados */
-            if (results.length <= 0) {
-                /* Define como os padrões para que ainda tenha resultados */
-                results = response.images;
-
-                /* Define como zero resultados no JSON */
-                response.search = {
-                    amount: 0,
-                    error: true,
-                    message: 'The number of IMAGE results was zero (4xx), to avoid major errors, the results were switched to a standard list.',
-                };
-
-                /* Se teve algum */
-            } else {
-                /* Define os dados no JSON */
-                response.search = {
-                    amount: results.length,
-                    error: false,
-                    message: false,
-                };
-
-                /* Define as imagens */
-                response.images = results;
-            }
-        }
-
-        /* Caso der erro em alguma coisa, não afeta o resultado e cai no catch abaixo */
-    } catch (error) {
-        /* Define como erro direto na raiz */
+        /* Se chegar a um HARD crash */
+    } catch (err) {
+        /* Lida com erros durante a busca */
         response.error = true;
-        response.code = error.code;
-        response.message = error.message;
+        response.code = err.code || 500;
+        response.message = err.message;
 
-        /* Se permite printar erros */
-        if (response.defaultSearch.showerror === true) {
-            /* Faz no formato console.error */
-            console.error(error);
-        }
+        /* So vai exibir a falha se permitido */
+        if (configs.showerror) { console.error('Erro ao buscar imagens:', err.message); }
     }
 
-    /* Retorna o que achou/o padrão */
+    /* Retorna a resposta final */
     return response;
 }
 
-/* Obtém os dados do modo de teste */
+/**
+ * Retorna o JSON de exemplo.
+ * @returns {Object} JSON de resposta padrão.
+ */
 function getExamples() {
-    /* Apenas fazendo return do JSON padrão mesmo */
     return response;
 }
 
-/* Obtém os dados de códigos HTTP */
+/**
+ * Retorna os códigos HTTP.
+ * @returns {Object} JSON com os códigos HTTP.
+ */
 function getHTTPcodes() {
-    /* Apenas fazendo return do JSON mesmo */
     return httpcodes;
 }
 
-/* Obtém os dados da package.json */
+/**
+ * Retorna o conteúdo do package.json.
+ * @returns {Object} JSON do package.json.
+ */
 function getPackageJSON() {
-    /* Apenas fazendo return do JSON mesmo */
     return mopack;
 }
 
-/* Define a module.exports com as funções */
+/* Exporta as funções do módulo */
 module.exports = {
     get: searchImages,
     defaults: getExamples,

@@ -23,6 +23,7 @@
             "gstatic.com"
         ],
         "only": [],
+        "exact": false,
         "showerror": false
     },
     "search": {

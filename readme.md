@@ -16,7 +16,7 @@ $ npm i
 ```  
   
 ## O que este módulo faz?  
-- Ele realiza a busca de imagens no serviço de imagens do [Google](https://images.google.com/) de forma ilimitada e bem simples.  
+- Ele realiza a busca de imagens no serviço de imagens do [Google](https://images.google.com/) de forma ilimitada e bem avançada, ainda que simples de usar.  
   
 ## O que este módulo tem de especial?  
 - Assim como o da [NASA](https://github.com/KillovSky/NASA), muitas coisas, confira abaixo:  
@@ -44,6 +44,16 @@ $ npm i
 $ npm test  
 ```  
   
+## Como ler a “Documentação WEB”:  
+- Basta abrir um terminal na pasta do módulo e digitar:  
+  
+```bash  
+$ npm i -g jsdoc # Use isso apenas uma vez na vida!  
+$ jsdoc index.js  
+```  
+  
+- Então é só ir até a pasta `out` e abrir o `index.html`.  
+  
 ## Como utilizar este módulo:  
 - Existem diversas formas de utilizar, mas como se trata de um script que faz uso de `Async`, irei dar dois exemplos que funcionam bem, lembrando, você pode rodar sem especificar nada pois também funciona desta forma.   
 - Clique em uma das linhas/setas abaixo para exibir os detalhes!  
@@ -54,16 +64,17 @@ $ npm test
 ```javascript  
 /* (USE AWAIT) Function especificada */  
 get({  
-    query: 'Anime',
-    safe: true,
-    useragent: 'Mozilla....',
-    searchURL: 'https://images....',
-    formats: ['jpg', 'png'],
-    filter: ['-site:gstatic.com'],
-    regexp: /[0-9]+/gi,
-    rawQuery: '&tbs=ic:trans',
-    showerror: false,
-    only: ['pinterest', 'devianart']
+    query: 'Anime',  
+    safe: true,  
+    useragent: 'Mozilla....',  
+    searchURL: 'https://images....',  
+    formats: ['jpg', 'png'],  
+    filter: ['gstatic.com', 'reedit'],  
+    regexp: /[0-9]+/gi,  
+    rawQuery: '&tbs=ic:trans',  
+    showerror: false,  
+    only: ['pinterest', 'https://www.deviantart.com'],  
+    exact: false,  
 })  
   
 /* ------------------------------------- *  
@@ -89,12 +100,12 @@ get({
 * ---------------------------------------  
 * 5° - formats  
 * Valores: Array  
-* O que é: A lista de imagens permitidas  
+* O que é: A lista de EXTENSÕES de imagens permitidas  
 * Padrão: [".jpg",".jpeg",".png",".gif",".bmp",".svg",".tiff",".ico"]  
 * ---------------------------------------  
 * 6° - filter  
 * Valores: Array  
-* O que é: URLs que não deve procurar  
+* O que é: URLs/Keywords que não deve procurar ou aparecer nos resultados  
 * Padrão: ["gstatic.com"]   
 * ---------------------------------------  
 * 7° - regexp  
@@ -114,8 +125,13 @@ get({
 * ---------------------------------------  
 * 10° - only  
 * Valores: Array  
-* O que é: Define a busca para puxar imagens apenas dessas URLs  
+* O que é: Define a busca para puxar imagens apenas dessas URLs/Keywords  
 * Padrão: []   
+* ---------------------------------------  
+* 11° - exact  
+* Valores: Boolean  
+* O que é: Define se a only deve filtrar e obter, de forma absoluta, os subdominios de imagem.  
+* Padrão: false   
 * ------------------------------------- */   
   
 /* Function sem especificar [Modo Teste]  */
@@ -251,6 +267,7 @@ console.log(data);
 		    "gstatic.com"  
 		],  
 		"only": [],  
+		"exact": false,  
 		"showerror": false  
 	},  
 	"search": {  
@@ -295,4 +312,5 @@ console.log(data);
 - Se obtiver algum problema, você pode me dizer [Reportando nas Issues](https://github.com/KillovSky/GImages/issues).  
 - Confira outros projetos meus [Acessando Isto](https://github.com/KillovSky).  
 - Se gostar, doe para me ajudar a continuar desenvolvendo, mais informações [Clicando Aqui](http://linktr.ee/KillovSky)  
+- Alternativamente, dê a sua estrela nos projetos pela GitHub, isso ajuda eles a ficarem mais visiveis ao mundo!
 - [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FKillovSky%2FGImages&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Views&edge_flat=true)](https://hits.seeyoufarm.com)  
